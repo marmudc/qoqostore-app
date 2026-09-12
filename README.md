@@ -32,16 +32,3 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Admin Authentication
-
-Admin login uses a dedicated Firebase Authentication email/password account. Create that account in Firebase Authentication, then set the following server-only environment variables:
-
-```env
-ADMIN_EMAIL=admin@example.com
-FIREBASE_ADMIN_PROJECT_ID=qoqostore-627ad
-FIREBASE_ADMIN_CLIENT_EMAIL=firebase-adminsdk-...@qoqostore-627ad.iam.gserviceaccount.com
-FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-```
-
-The `ADMIN_EMAIL` value must match the dedicated Firebase admin account. Do not use `ADMIN_PASSWORD`; the password is stored and managed by Firebase Authentication. Never expose the `FIREBASE_ADMIN_*` variables with a `NEXT_PUBLIC_` prefix.
