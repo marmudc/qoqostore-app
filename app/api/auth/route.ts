@@ -34,9 +34,9 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error) {
-    console.error('Admin authentication failed:', error);
-    return NextResponse.json({ success: false }, { status: 401 });
+  } catch (error: any) {
+    console.error("API Auth Error:", error);
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 }
 
