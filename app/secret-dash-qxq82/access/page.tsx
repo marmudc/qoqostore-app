@@ -19,18 +19,6 @@ export default function AdminAccessPage() {
 
     try {
       const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
-      const idToken = await credential.user.getIdToken();
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (!response.ok) {
-        await auth.signOut();
-        setError(response.status === 403 ? 'Akun ini bukan akun admin.' : 'Email atau password admin salah.');
-        return;
-      }
 
       router.push('/secret-dash-qxq82');
       router.refresh();

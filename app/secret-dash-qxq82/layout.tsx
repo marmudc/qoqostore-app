@@ -1,7 +1,30 @@
+'use client';
+
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.replace('/secret-dash-qxq82/access');
+        return;
+      }
+
+      setIsCheckingAuth(false);
+    });
+  }, [router]);
+
+  if (isCheckingAuth) {
+    return <div className="min-h-screen bg-gray-100" />;
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100 font-sans text-gray-900">
       
@@ -44,7 +67,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </Link>
         </nav>
         
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 space-y-2">
+          <button
+            type="button"
+            onClick={() => signOut(auth)}
+            className="block w-full px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            Keluar
+          </button>
           <Link 
             href="/" 
             className="block w-full text-center px-4 py-2 text-sm font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-200 transition-colors"
