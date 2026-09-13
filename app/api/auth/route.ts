@@ -43,7 +43,18 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
-    console.error('API Auth Error:', error);
+    const errorCode = error instanceof Error ? error.message : 'UNKNOWN';
+    const firebaseErrorCode = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '';
+    console.error('API Auth Error:', firebaseErrorCode || errorCode, error);
+
+    if (errorCode === 'FIREBASE_ADMIN_CONFIG_INCOMPLETE' || errorCode === 'FIREBASE_ADMIN_PRIVATE_KEY_INVALID') {
+      return NextResponse.json({ error: 'Konfigurasi Firebase Admin di server tidak valid.' }, { status: 503 });
+    }
+
+    if (firebaseErrorCode.startsWith('auth/id-token') || firebaseErrorCode === 'auth/argument-error') {
+      return NextResponse.json({ error: 'Token Firebase tidak valid atau sudah kedaluwarsa.' }, { status: 401 });
+    }
+
     return NextResponse.json({ error: 'Autentikasi admin gagal.' }, { status: 500 });
   }
 }
