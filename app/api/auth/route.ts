@@ -34,9 +34,9 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error: any) {
-    console.error("API Auth Error:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  } catch (error) {
+    console.error('API Auth Error:', error);
+    return NextResponse.json({ error: 'Autentikasi admin gagal.' }, { status: 500 });
   }
 }
 
