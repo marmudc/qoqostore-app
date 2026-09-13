@@ -4,23 +4,31 @@ import { getFirebaseAdminAuth } from '@/lib/firebase-admin';
 const SESSION_COOKIE = 'admin_session';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 5;
 
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
-    const { idToken } = await request.json();
+    const body = await request.json().catch(() => null);
+    const idToken = body && typeof body === 'object' && 'idToken' in body ? body.idToken : null;
     const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
-    if (typeof idToken !== 'string' || !idToken || !adminEmail) {
-      return NextResponse.json({ error: 'Konfigurasi login admin belum lengkap.' }, { status: 500 });
+    if (!adminEmail) {
+      console.error('API Auth Error: ADMIN_EMAIL is not configured.');
+      return NextResponse.json({ error: 'Konfigurasi login admin belum lengkap.' }, { status: 503 });
+    }
+
+    if (typeof idToken !== 'string' || !idToken.trim()) {
+      return NextResponse.json({ error: 'Token login tidak valid.' }, { status: 400 });
     }
 
     const auth = getFirebaseAdminAuth();
-    const decodedToken = await auth.verifyIdToken(idToken);
+    const decodedToken = await auth.verifyIdToken(idToken.trim());
 
     if (decodedToken.email?.toLowerCase() !== adminEmail) {
       return NextResponse.json({ success: false }, { status: 403 });
     }
 
-    const sessionCookie = await auth.createSessionCookie(idToken, {
+    const sessionCookie = await auth.createSessionCookie(idToken.trim(), {
       expiresIn: SESSION_MAX_AGE * 1000,
     });
     const response = NextResponse.json({ success: true });
